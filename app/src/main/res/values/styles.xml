@@ -1,0 +1,25 @@
+<resources>
+
+    <!-- Base application theme. -->
+    <style name="AppTheme" parent="Theme.AppCompat.Light" >
+        <item name="android:colorPrimary">@color/primary</item>
+        <item name="android:colorPrimaryDark">@color/primary_dark</item>
+        <item name="android:colorAccent">@color/accent</item>
+        <item name="android:textColorPrimary">@color/text_primary</item>
+        <item name="android:textColor">@color/text_secondary</item>
+        <item name="android:navigationBarColor">@color/primary_dark</item>
+
+
+        <!-- Support library compatibility -->
+        <item name="actionBarStyle">@style/ColoredActionBar</item>
+    </style>
+
+    <style name="ColoredActionBar"
+           parent="@style/Widget.AppCompat.Light.ActionBar.Solid.Inverse">
+        <item name="android:background">@color/primary</item>
+
+        <!-- Support library compatibility -->
+        <item name="background">@color/primary</item>
+    </style>
+
+</resources>
