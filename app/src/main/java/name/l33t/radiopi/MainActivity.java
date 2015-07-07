@@ -32,7 +32,7 @@ public class MainActivity extends ActionBarActivity implements RemotePlayer.Remo
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        rplayer = new RemotePlayer();
+        rplayer = new RemotePlayer(getApplicationContext());
         rplayer.registerCallback(this);
         db = new DataAccess(this);
         new AsyncListTask().execute();
@@ -69,11 +69,7 @@ public class MainActivity extends ActionBarActivity implements RemotePlayer.Remo
 
         if(null != url)
         {
-            try {
-                rplayer.playUrl(url, stationname);
-            } catch (UnsupportedEncodingException e) {
-                Log.d("playbutton", "UnsupportedEncodingException", e);
-            }
+            rplayer.playUrl(url, stationname);
         }
         Log.d("playbutton", "pressed play");
     }

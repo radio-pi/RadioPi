@@ -1,5 +1,6 @@
 package name.l33t.radiopi;
 
+import android.content.Context;
 import android.util.Log;
 import android.widget.Toast;
 
@@ -27,17 +28,23 @@ public class RemotePlayer {
 
     private static final String BASE_URL = "http://radio-pi.l33t.lan:3000/";
     private static AsyncHttpClient client;
+    private static Context static_context;
 
-    public RemotePlayer()
+    public RemotePlayer(Context context)
     {
         client = new AsyncHttpClient();
+        static_context = context;
     }
 
-    public boolean playUrl(String url, final String stationname) throws UnsupportedEncodingException {
+    public boolean playUrl(String url, final String stationname) {
         Log.d("playUrl", "post to " + getAbsoluteUrl("play") + "with the url: " + url);
 
-        RequestParams params = new RequestParams();
-        params.add("url", url);
+        JSONObject params = new JSONObject();
+        try {
+            params.put("url", url);
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
 
         post("play", params, new AsyncHttpResponseHandler() {
             @Override
@@ -77,9 +84,15 @@ public class RemotePlayer {
         client.get(getAbsoluteUrl(url), params, responseHandler);
     }
 
-    private static void post(String url, RequestParams params, AsyncHttpResponseHandler responseHandler) {
-        client.addHeader("Content-Type","application/json");
-        client.post(getAbsoluteUrl(url), params, responseHandler);
+    private static void post(String url, JSONObject jsonBody, AsyncHttpResponseHandler responseHandler) {
+        StringEntity entity = null;
+        try {
+            entity = new StringEntity(jsonBody.toString());
+        } catch (UnsupportedEncodingException e) {
+            e.printStackTrace();
+        }
+
+        client.post(static_context, getAbsoluteUrl(url), entity, "application/json", responseHandler);
     }
 
     private static String getAbsoluteUrl(String relativeUrl) {
@@ -87,8 +100,12 @@ public class RemotePlayer {
     }
 
     public boolean volume(Integer seekValue) {
-        RequestParams params = new RequestParams();
-        params.add("volume", String.valueOf(seekValue));
+        JSONObject params = new JSONObject();
+        try {
+            params.put("volume", seekValue);
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
 
         post("volume", params, new AsyncHttpResponseHandler() {
             @Override
