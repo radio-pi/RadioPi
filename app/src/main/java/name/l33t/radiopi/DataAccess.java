@@ -18,7 +18,7 @@ public class DataAccess extends SQLiteOpenHelper {
 
     // Name und Version der Datenbank
     private static final String DATABASE_NAME = "radio.db";
-    private static final int DATABASE_VERSION = 4;
+    private static final int DATABASE_VERSION = 5;
 
     //Database Variables Tracking
     private static final String TABLE_NAME = "StationList";
@@ -47,6 +47,7 @@ public class DataAccess extends SQLiteOpenHelper {
         insert("Radio SRF 1", "http://stream.srg-ssr.ch/m/drs1/mp3_128", 3, db);
         insert("Radio SRF 2", "http://stream.srg-ssr.ch/m/drs2/mp3_128", 4, db);
         insert("Radio SRF 3", "http://stream.srg-ssr.ch/m/drs3/mp3_128", 5, db);
+        insert("Radio Swiss Jazz", "http://stream.srg-ssr.ch/m/rsj/mp3_128", 6, db);
     }
 
     @Override
