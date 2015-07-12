@@ -86,10 +86,12 @@ public class RemotePlayer {
 
     private static void post(String url, JSONObject jsonBody, AsyncHttpResponseHandler responseHandler) {
         StringEntity entity = null;
-        try {
-            entity = new StringEntity(jsonBody.toString());
-        } catch (UnsupportedEncodingException e) {
-            e.printStackTrace();
+        if (jsonBody != null) {
+            try {
+                entity = new StringEntity(jsonBody.toString());
+            } catch (UnsupportedEncodingException e) {
+                e.printStackTrace();
+            }
         }
 
         client.post(static_context, getAbsoluteUrl(url), entity, "application/json", responseHandler);
