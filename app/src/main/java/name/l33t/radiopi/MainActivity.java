@@ -15,13 +15,12 @@ import android.widget.SeekBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import java.io.UnsupportedEncodingException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
 
-public class MainActivity extends ActionBarActivity implements RemotePlayer.RemotePlayerCallbackClass {
+public class MainActivity extends ActionBarActivity implements RemotePlayer.RemotePlayerMessageCallbackClass, RemotePlayer.RemotePlayerVolumeCallbackClass {
 
 
     private RemotePlayer rplayer;
@@ -34,7 +33,10 @@ public class MainActivity extends ActionBarActivity implements RemotePlayer.Remo
         setContentView(R.layout.activity_main);
 
         rplayer = new RemotePlayer(getApplicationContext());
-        rplayer.registerCallback(this);
+        rplayer.registerMessageCallback(this);
+        rplayer.registerVolumeCallback(this);
+        rplayer.getvolume();
+
         db = new DataAccess(this);
         new AsyncListTask().execute();
         SeekBar bar = (SeekBar) findViewById(R.id.seekBar);
@@ -85,9 +87,15 @@ public class MainActivity extends ActionBarActivity implements RemotePlayer.Remo
     }
 
     @Override
-    public void remotePlayerCallback(String message) {
+    public void remotePlayerMessageCallback(String message) {
         Log.d("callback", message);
         Toast.makeText(getApplicationContext(), message, Toast.LENGTH_SHORT).show();
+    }
+
+    @Override
+    public void registerVolumeCallback(Integer vol) {
+        SeekBar bar = (SeekBar) findViewById(R.id.seekBar);
+        bar.setProgress(vol);
     }
 
     private class seekbarOnChange implements SeekBar.OnSeekBarChangeListener {

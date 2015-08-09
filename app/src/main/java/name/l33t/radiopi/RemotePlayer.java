@@ -2,7 +2,6 @@ package name.l33t.radiopi;
 
 import android.content.Context;
 import android.util.Log;
-import android.widget.Toast;
 
 import com.loopj.android.http.*;
 
@@ -15,15 +14,26 @@ import java.io.UnsupportedEncodingException;
 
 public class RemotePlayer {
 
-    /*Setup for callback*/
-    interface RemotePlayerCallbackClass{
-        void remotePlayerCallback(String message);
+    /*Setup for message callback*/
+    interface RemotePlayerMessageCallbackClass {
+        void remotePlayerMessageCallback(String message);
     }
 
-    RemotePlayerCallbackClass callback;
+    RemotePlayerMessageCallbackClass message_callback;
 
-    void registerCallback(RemotePlayerCallbackClass callbackClass){
-        callback = callbackClass;
+    void registerMessageCallback(RemotePlayerMessageCallbackClass callbackClass){
+        message_callback = callbackClass;
+    }
+
+    /*Setup for volume callback*/
+    interface RemotePlayerVolumeCallbackClass {
+        void registerVolumeCallback(Integer vol);
+    }
+
+    RemotePlayerVolumeCallbackClass volume_callback;
+
+    void registerVolumeCallback(RemotePlayerVolumeCallbackClass callbackClass){
+        volume_callback = callbackClass;
     }
 
     private static final String BASE_URL = "http://radio-pi.l33t.lan:3000/";
@@ -50,12 +60,12 @@ public class RemotePlayer {
             @Override
             public void onSuccess(int statusCode, Header[] headers, byte[] response) {
                 Log.d("playUrl", response.toString());
-                callback.remotePlayerCallback("Playing: " + stationname);
+                message_callback.remotePlayerMessageCallback("Playing: " + stationname);
             }
             @Override
             public void onFailure(int statusCode, Header[] headers, byte[] errorResponse, Throwable e) {
                 Log.d("playUrl", "something went wrong", e);
-                callback.remotePlayerCallback("Something went wrong!");
+                message_callback.remotePlayerMessageCallback("Something went wrong!");
             }
         });
         return true;
@@ -68,13 +78,13 @@ public class RemotePlayer {
             @Override
             public void onSuccess(int statusCode, Header[] headers, byte[] response) {
                 Log.d("stop", response.toString());
-                callback.remotePlayerCallback("Stopped");
+                message_callback.remotePlayerMessageCallback("Stopped");
             }
 
             @Override
             public void onFailure(int statusCode, Header[] headers, byte[] errorResponse, Throwable e) {
                 Log.d("stop", "something went wrong", e);
-                callback.remotePlayerCallback("Something went wrong!");
+                message_callback.remotePlayerMessageCallback("Something went wrong!");
             }
         });
         return true;
@@ -117,7 +127,32 @@ public class RemotePlayer {
             @Override
             public void onFailure(int statusCode, Header[] headers, byte[] errorResponse, Throwable e) {
                 Log.d("volume", "something went wrong", e);
-                callback.remotePlayerCallback("Something went wrong!");
+                message_callback.remotePlayerMessageCallback("Something went wrong!");
+            }
+        });
+        return true;
+    }
+
+    public boolean getvolume() {
+
+        get("volume", null, new AsyncHttpResponseHandler() {
+            @Override
+            public void onSuccess(int statusCode, Header[] headers, byte[] response) {
+                Integer volume = 50;
+
+                try {
+                    JSONObject jRestponse = new JSONObject(new String(response));
+                    volume = jRestponse.getInt("volume");
+                    Log.d("volume", volume.toString());
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                }
+                volume_callback.registerVolumeCallback(volume);
+            }
+            @Override
+            public void onFailure(int statusCode, Header[] headers, byte[] errorResponse, Throwable e) {
+                Log.d("volume", "something went wrong", e);
+                message_callback.remotePlayerMessageCallback("Something went wrong!");
             }
         });
         return true;
