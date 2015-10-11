@@ -11,6 +11,17 @@ import org.json.JSONObject;
 import java.net.URI;
 
 public class VolumeWebSocket extends WebSocketClient {
+    /*Setup for volume callback*/
+    interface WebSocketVolumeCallbackClass {
+        void registerVolumeCallback(Integer vol);
+    }
+
+    WebSocketVolumeCallbackClass volume_callback;
+
+    void registerVolumeCallback(WebSocketVolumeCallbackClass callbackClass){
+        volume_callback = callbackClass;
+    }
+
     public VolumeWebSocket(URI serverURI) {
         super(serverURI);
     }
@@ -21,8 +32,10 @@ public class VolumeWebSocket extends WebSocketClient {
     }
 
     @Override
-    public void onMessage(String s) {
-        Log.d("onMessage", "something went message " + s);
+    public void onMessage(String msg) {
+        Log.d("onMessage", "got a new message: " + msg);
+        int volume = Integer.parseInt(msg);
+        volume_callback.registerVolumeCallback(volume);
     }
 
     @Override

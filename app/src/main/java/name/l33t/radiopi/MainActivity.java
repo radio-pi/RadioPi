@@ -23,7 +23,7 @@ import java.util.Arrays;
 import java.util.List;
 
 
-public class MainActivity extends ActionBarActivity implements RemotePlayer.RemotePlayerMessageCallbackClass, RemotePlayer.RemotePlayerVolumeCallbackClass {
+public class MainActivity extends ActionBarActivity implements RemotePlayer.RemotePlayerMessageCallbackClass, RemotePlayer.RemotePlayerVolumeCallbackClass, VolumeWebSocket.WebSocketVolumeCallbackClass {
 
 
     private RemotePlayer rplayer;
@@ -41,6 +41,8 @@ public class MainActivity extends ActionBarActivity implements RemotePlayer.Remo
         rplayer.registerVolumeCallback(this);
         rplayer.getvolume();
 
+
+
         db = new DataAccess(this);
         new AsyncListTask().execute();
         SeekBar bar = (SeekBar) findViewById(R.id.seekBar);
@@ -54,17 +56,29 @@ public class MainActivity extends ActionBarActivity implements RemotePlayer.Remo
 
         try {
             ws = new VolumeWebSocket(new URI("ws://192.168.17.174:9000"));
+            ws.registerVolumeCallback(this);
         } catch (URISyntaxException e) {
             e.printStackTrace();
         }
+    }
+
+    @Override
+    protected void onStart(){
+        super.onStart();
 
         try {
             ws.connectBlocking();
-            ws.send("waaaaaaaaaa");
-            ws.close();
+            ws.send("volume");
         } catch (InterruptedException e) {
             e.printStackTrace();
         }
+    }
+
+    @Override
+    protected void onStop(){
+        super.onStop();
+        // cleanup websocket
+        ws.close();
     }
 
 
