@@ -39,9 +39,7 @@ public class MainActivity extends ActionBarActivity implements RemotePlayer.Remo
         rplayer = new RemotePlayer(getApplicationContext());
         rplayer.registerMessageCallback(this);
         rplayer.registerVolumeCallback(this);
-        rplayer.getvolume();
-
-
+        //rplayer.getvolume(); // using now websockets
 
         db = new DataAccess(this);
         new AsyncListTask().execute();
@@ -65,20 +63,24 @@ public class MainActivity extends ActionBarActivity implements RemotePlayer.Remo
     @Override
     protected void onStart(){
         super.onStart();
-
-        try {
-            ws.connectBlocking();
-            ws.send("volume");
-        } catch (InterruptedException e) {
-            e.printStackTrace();
+        if(!ws.isOpen()){
+            ws.connect();
         }
     }
 
     @Override
-    protected void onStop(){
-        super.onStop();
+    protected void onDestroy(){
         // cleanup websocket
-        ws.close();
+        // doesn't work somehow
+        // WebSocket connection closed: connection was closed uncleanly (peer dropped the TCP connection without previous WebSocket closing handshake)
+        if(ws.isOpen()){
+            try {
+                ws.closeBlocking();
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
+        }
+        super.onDestroy();
     }
 
 

@@ -29,6 +29,7 @@ public class VolumeWebSocket extends WebSocketClient {
     @Override
     public void onOpen(ServerHandshake serverHandshake) {
         Log.d("onOpen", "something went open");
+        this.send("volume");
     }
 
     @Override
