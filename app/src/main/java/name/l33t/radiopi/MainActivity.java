@@ -3,6 +3,7 @@ package name.l33t.radiopi;
 import android.content.Intent;
 import android.database.Cursor;
 import android.os.AsyncTask;
+import android.os.Build;
 import android.support.v7.app.ActionBarActivity;
 import android.os.Bundle;
 import android.util.Log;
@@ -15,17 +16,19 @@ import android.widget.SeekBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import java.net.URI;
+import java.net.URISyntaxException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
 
-public class MainActivity extends ActionBarActivity implements RemotePlayer.RemotePlayerMessageCallbackClass, RemotePlayer.RemotePlayerVolumeCallbackClass {
-
+public class MainActivity extends ActionBarActivity implements Callback.Message, Callback.Volume {
 
     private RemotePlayer rplayer;
     private DataAccess db;
     private Integer selectedIndex;
+    private VolumeWebSocket ws = null;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -35,14 +38,46 @@ public class MainActivity extends ActionBarActivity implements RemotePlayer.Remo
         rplayer = new RemotePlayer(getApplicationContext());
         rplayer.registerMessageCallback(this);
         rplayer.registerVolumeCallback(this);
-        rplayer.getvolume();
+        //rplayer.getvolume(); // using now websockets
 
         db = new DataAccess(this);
         new AsyncListTask().execute();
         SeekBar bar = (SeekBar) findViewById(R.id.seekBar);
         bar.setOnSeekBarChangeListener(new seekbarOnChange());
+
+        if ("google_sdk".equals( Build.PRODUCT )) {
+            /*No one using this ipv6 anyway xD*/
+            java.lang.System.setProperty("java.net.preferIPv6Addresses", "false");
+            java.lang.System.setProperty("java.net.preferIPv4Stack", "true");
+        }
     }
 
+    @Override
+    protected void onStart(){
+        super.onStart();
+        if(ws == null)
+        {
+            try {
+                ws = new VolumeWebSocket(new URI("ws://192.168.17.174:9000"));
+                ws.registerVolumeCallback(this);
+            } catch (URISyntaxException e) {
+                e.printStackTrace();
+            }
+        }
+
+        if(!ws.isOpen()){
+            ws.connect();
+        }
+    }
+
+    @Override
+    protected void onStop(){
+        if(ws != null && ws.isOpen()){
+            ws.close();
+            ws = null;
+        }
+        super.onStop();
+    }
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
@@ -87,15 +122,15 @@ public class MainActivity extends ActionBarActivity implements RemotePlayer.Remo
     }
 
     @Override
-    public void remotePlayerMessageCallback(String message) {
-        Log.d("callback", message);
-        Toast.makeText(getApplicationContext(), message, Toast.LENGTH_SHORT).show();
+    public void setVolume(Integer vol) {
+        SeekBar bar = (SeekBar) findViewById(R.id.seekBar);
+        bar.setProgress(vol);
     }
 
     @Override
-    public void registerVolumeCallback(Integer vol) {
-        SeekBar bar = (SeekBar) findViewById(R.id.seekBar);
-        bar.setProgress(vol);
+    public void displayToast(String message) {
+        Log.d("callback", message);
+        Toast.makeText(getApplicationContext(), message, Toast.LENGTH_SHORT).show();
     }
 
     private class seekbarOnChange implements SeekBar.OnSeekBarChangeListener {
