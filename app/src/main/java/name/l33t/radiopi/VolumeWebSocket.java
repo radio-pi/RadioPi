@@ -10,15 +10,11 @@ import org.json.JSONObject;
 
 import java.net.URI;
 
-public class VolumeWebSocket extends WebSocketClient {
-    /*Setup for volume callback*/
-    interface WebSocketVolumeCallbackClass {
-        void registerVolumeCallback(Integer vol);
-    }
+public class VolumeWebSocket extends WebSocketClient implements Callback.VolumeImplementation {
 
-    WebSocketVolumeCallbackClass volume_callback;
-
-    void registerVolumeCallback(WebSocketVolumeCallbackClass callbackClass){
+    Callback.Volume volume_callback;
+    @Override
+    public void registerVolumeCallback(Callback.Volume callbackClass) {
         volume_callback = callbackClass;
     }
 
@@ -40,7 +36,7 @@ public class VolumeWebSocket extends WebSocketClient {
         }
 
         int volume = Integer.parseInt(msg);
-        volume_callback.registerVolumeCallback(volume);
+        volume_callback.setVolume(volume);
     }
 
     @Override
@@ -52,4 +48,6 @@ public class VolumeWebSocket extends WebSocketClient {
     public void onError(Exception e) {
         Log.d("onError", "something went wrong", e);
     }
+
+
 }

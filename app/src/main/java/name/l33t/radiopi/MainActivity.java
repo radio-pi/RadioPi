@@ -23,8 +23,7 @@ import java.util.Arrays;
 import java.util.List;
 
 
-public class MainActivity extends ActionBarActivity implements RemotePlayer.RemotePlayerMessageCallbackClass, RemotePlayer.RemotePlayerVolumeCallbackClass, VolumeWebSocket.WebSocketVolumeCallbackClass {
-
+public class MainActivity extends ActionBarActivity implements Callback.Message, Callback.Volume {
 
     private RemotePlayer rplayer;
     private DataAccess db;
@@ -123,15 +122,15 @@ public class MainActivity extends ActionBarActivity implements RemotePlayer.Remo
     }
 
     @Override
-    public void remotePlayerMessageCallback(String message) {
-        Log.d("callback", message);
-        Toast.makeText(getApplicationContext(), message, Toast.LENGTH_SHORT).show();
+    public void setVolume(Integer vol) {
+        SeekBar bar = (SeekBar) findViewById(R.id.seekBar);
+        bar.setProgress(vol);
     }
 
     @Override
-    public void registerVolumeCallback(Integer vol) {
-        SeekBar bar = (SeekBar) findViewById(R.id.seekBar);
-        bar.setProgress(vol);
+    public void displayToast(String message) {
+        Log.d("callback", message);
+        Toast.makeText(getApplicationContext(), message, Toast.LENGTH_SHORT).show();
     }
 
     private class seekbarOnChange implements SeekBar.OnSeekBarChangeListener {

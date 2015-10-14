@@ -12,28 +12,19 @@ import org.json.JSONObject;
 
 import java.io.UnsupportedEncodingException;
 
-public class RemotePlayer {
+public class RemotePlayer implements Callback.VolumeImplementation, Callback.MessageImplementation {
 
-    /*Setup for message callback*/
-    interface RemotePlayerMessageCallbackClass {
-        void remotePlayerMessageCallback(String message);
-    }
+    Callback.Volume volume_callback;
+    Callback.Message message_callback;
 
-    RemotePlayerMessageCallbackClass message_callback;
-
-    void registerMessageCallback(RemotePlayerMessageCallbackClass callbackClass){
-        message_callback = callbackClass;
-    }
-
-    /*Setup for volume callback*/
-    interface RemotePlayerVolumeCallbackClass {
-        void registerVolumeCallback(Integer vol);
-    }
-
-    RemotePlayerVolumeCallbackClass volume_callback;
-
-    void registerVolumeCallback(RemotePlayerVolumeCallbackClass callbackClass){
+    @Override
+    public void registerVolumeCallback(Callback.Volume callbackClass) {
         volume_callback = callbackClass;
+    }
+
+    @Override
+    public void registerMessageCallback(Callback.Message callbackClass) {
+        message_callback = callbackClass;
     }
 
     private static final String BASE_URL = "http://radio-pi.l33t.lan:3000/";
@@ -60,12 +51,12 @@ public class RemotePlayer {
             @Override
             public void onSuccess(int statusCode, Header[] headers, byte[] response) {
                 Log.d("playUrl", response.toString());
-                message_callback.remotePlayerMessageCallback("Playing: " + stationname);
+                message_callback.displayToast("Playing: " + stationname);
             }
             @Override
             public void onFailure(int statusCode, Header[] headers, byte[] errorResponse, Throwable e) {
                 Log.d("playUrl", "something went wrong", e);
-                message_callback.remotePlayerMessageCallback("Something went wrong!");
+                message_callback.displayToast("Something went wrong!");
             }
         });
         return true;
@@ -78,13 +69,13 @@ public class RemotePlayer {
             @Override
             public void onSuccess(int statusCode, Header[] headers, byte[] response) {
                 Log.d("stop", response.toString());
-                message_callback.remotePlayerMessageCallback("Stopped");
+                message_callback.displayToast("Stopped");
             }
 
             @Override
             public void onFailure(int statusCode, Header[] headers, byte[] errorResponse, Throwable e) {
                 Log.d("stop", "something went wrong", e);
-                message_callback.remotePlayerMessageCallback("Something went wrong!");
+                message_callback.displayToast("Something went wrong!");
             }
         });
         return true;
@@ -124,10 +115,11 @@ public class RemotePlayer {
             public void onSuccess(int statusCode, Header[] headers, byte[] response) {
                 Log.d("volume", response.toString());
             }
+
             @Override
             public void onFailure(int statusCode, Header[] headers, byte[] errorResponse, Throwable e) {
                 Log.d("volume", "something went wrong", e);
-                message_callback.remotePlayerMessageCallback("Something went wrong!");
+                message_callback.displayToast("Something went wrong!");
             }
         });
         return true;
@@ -147,12 +139,12 @@ public class RemotePlayer {
                 } catch (JSONException e) {
                     e.printStackTrace();
                 }
-                volume_callback.registerVolumeCallback(volume);
+                volume_callback.setVolume(volume);
             }
             @Override
             public void onFailure(int statusCode, Header[] headers, byte[] errorResponse, Throwable e) {
                 Log.d("volume", "something went wrong", e);
-                message_callback.remotePlayerMessageCallback("Something went wrong!");
+                message_callback.displayToast("Something went wrong!");
             }
         });
         return true;
