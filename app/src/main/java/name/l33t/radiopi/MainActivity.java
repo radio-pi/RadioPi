@@ -29,7 +29,7 @@ public class MainActivity extends ActionBarActivity implements RemotePlayer.Remo
     private RemotePlayer rplayer;
     private DataAccess db;
     private Integer selectedIndex;
-    private VolumeWebSocket ws;
+    private VolumeWebSocket ws = null;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -51,38 +51,34 @@ public class MainActivity extends ActionBarActivity implements RemotePlayer.Remo
             java.lang.System.setProperty("java.net.preferIPv6Addresses", "false");
             java.lang.System.setProperty("java.net.preferIPv4Stack", "true");
         }
-
-        try {
-            ws = new VolumeWebSocket(new URI("ws://192.168.17.174:9000"));
-            ws.registerVolumeCallback(this);
-        } catch (URISyntaxException e) {
-            e.printStackTrace();
-        }
     }
 
     @Override
     protected void onStart(){
         super.onStart();
+        if(ws == null)
+        {
+            try {
+                ws = new VolumeWebSocket(new URI("ws://192.168.17.174:9000"));
+                ws.registerVolumeCallback(this);
+            } catch (URISyntaxException e) {
+                e.printStackTrace();
+            }
+        }
+
         if(!ws.isOpen()){
             ws.connect();
         }
     }
 
     @Override
-    protected void onDestroy(){
-        // cleanup websocket
-        // doesn't work somehow
-        // WebSocket connection closed: connection was closed uncleanly (peer dropped the TCP connection without previous WebSocket closing handshake)
-        if(ws.isOpen()){
-            try {
-                ws.closeBlocking();
-            } catch (InterruptedException e) {
-                e.printStackTrace();
-            }
+    protected void onStop(){
+        if(ws != null && ws.isOpen()){
+            ws.close();
+            ws = null;
         }
-        super.onDestroy();
+        super.onStop();
     }
-
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {

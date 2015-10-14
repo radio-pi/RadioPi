@@ -35,6 +35,10 @@ public class VolumeWebSocket extends WebSocketClient {
     @Override
     public void onMessage(String msg) {
         Log.d("onMessage", "got a new message: " + msg);
+        if(msg.equals("volume")){
+            return;
+        }
+
         int volume = Integer.parseInt(msg);
         volume_callback.registerVolumeCallback(volume);
     }
