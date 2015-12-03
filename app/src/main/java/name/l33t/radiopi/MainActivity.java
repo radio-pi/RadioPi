@@ -58,7 +58,7 @@ public class MainActivity extends ActionBarActivity implements Callback.Message,
         if(ws == null)
         {
             try {
-                ws = new VolumeWebSocket(new URI("ws://192.168.17.174:9000"));
+                ws = new VolumeWebSocket(new URI("ws://radio-pi.l33t.lan:9000"));
                 ws.registerVolumeCallback(this);
             } catch (URISyntaxException e) {
                 e.printStackTrace();
@@ -74,8 +74,8 @@ public class MainActivity extends ActionBarActivity implements Callback.Message,
     protected void onStop(){
         if(ws != null && ws.isOpen()){
             ws.close();
-            ws = null;
         }
+        ws = null;
         super.onStop();
     }
 
