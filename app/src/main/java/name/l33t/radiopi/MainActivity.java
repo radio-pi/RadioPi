@@ -125,7 +125,13 @@ public class MainActivity extends ActionBarActivity implements Callback.Message,
     @Override
     public void setVolume(Integer vol) {
         SeekBar bar = (SeekBar) findViewById(R.id.seekBar);
-        bar.setProgress(vol);
+
+        // don't update progress bar if the volume
+        // difference is only 2 this only happens
+        // due to rounding errors
+        if((bar.getProgress() - vol) < 2) {
+            bar.setProgress(vol);
+        }
     }
 
     @Override

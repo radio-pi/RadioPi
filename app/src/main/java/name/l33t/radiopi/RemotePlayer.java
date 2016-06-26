@@ -27,7 +27,8 @@ public class RemotePlayer implements Callback.VolumeImplementation, Callback.Mes
         message_callback = callbackClass;
     }
 
-    private static final String BASE_URL = "http://radio-pi.l33t.lan:3000/";
+    //private static final String BASE_URL = "http://radio-pi.l33t.network:3000/";
+    private static final String BASE_URL = "http://192.168.17.174:3000/";
     private static AsyncHttpClient client;
     private static Context static_context;
 
