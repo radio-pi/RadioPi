@@ -1,6 +1,5 @@
 package name.l33t.radiopi;
 
-import android.app.Activity;
 import android.os.Bundle;
 import android.support.v4.app.NavUtils;
 import android.support.v7.app.ActionBarActivity;

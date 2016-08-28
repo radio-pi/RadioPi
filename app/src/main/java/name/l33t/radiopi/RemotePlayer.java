@@ -4,9 +4,9 @@ import android.content.Context;
 import android.util.Log;
 
 import com.loopj.android.http.*;
+import cz.msebera.android.httpclient.Header;
+import cz.msebera.android.httpclient.entity.StringEntity;
 
-import org.apache.http.Header;
-import org.apache.http.entity.StringEntity;
 import org.json.JSONException;
 import org.json.JSONObject;
 
@@ -27,7 +27,7 @@ public class RemotePlayer implements Callback.VolumeImplementation, Callback.Mes
         message_callback = callbackClass;
     }
 
-    private static final String BASE_URL = "http://radio-pi.l33t.lan:3000/";
+    private static final String BASE_URL = "http://" + Settings.getRadioPiUrl() + ":3000/";
     private static AsyncHttpClient client;
     private static Context static_context;
 

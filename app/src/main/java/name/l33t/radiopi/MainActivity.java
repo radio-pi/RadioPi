@@ -58,7 +58,8 @@ public class MainActivity extends ActionBarActivity implements Callback.Message,
         if(ws == null)
         {
             try {
-                ws = new VolumeWebSocket(new URI("ws://192.168.17.174:9000"));
+                //ws = new VolumeWebSocket(new URI("ws://radio-pi.l33t.lan:9000"));
+                ws = new VolumeWebSocket(new URI("ws://" + Settings.getRadioPiUrl() + ":9000"));
                 ws.registerVolumeCallback(this);
             } catch (URISyntaxException e) {
                 e.printStackTrace();
@@ -74,8 +75,8 @@ public class MainActivity extends ActionBarActivity implements Callback.Message,
     protected void onStop(){
         if(ws != null && ws.isOpen()){
             ws.close();
-            ws = null;
         }
+        ws = null;
         super.onStop();
     }
 
@@ -124,7 +125,13 @@ public class MainActivity extends ActionBarActivity implements Callback.Message,
     @Override
     public void setVolume(Integer vol) {
         SeekBar bar = (SeekBar) findViewById(R.id.seekBar);
-        bar.setProgress(vol);
+
+        // don't update progress bar if the volume
+        // difference is only 2 this only happens
+        // due to rounding errors
+        if((bar.getProgress() - vol) < 2) {
+            bar.setProgress(vol);
+        }
     }
 
     @Override

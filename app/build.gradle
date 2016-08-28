@@ -22,6 +22,6 @@ android {
 dependencies {
     compile fileTree(include: ['*.jar'], dir: 'libs')
     compile 'com.android.support:appcompat-v7:22.0.0'
-    compile 'com.loopj.android:android-async-http:1.4.8'
+    compile 'com.loopj.android:android-async-http:1.4.9'
     compile files('/home/l33tname/StudioProjects/RadioPi/libs/java_websocket.jar')
 }
