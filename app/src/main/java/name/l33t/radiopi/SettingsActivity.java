@@ -5,6 +5,8 @@ import android.support.v4.app.NavUtils;
 import android.support.v7.app.ActionBarActivity;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.View;
+import android.widget.EditText;
 
 public class SettingsActivity extends ActionBarActivity {
     @Override
@@ -12,6 +14,12 @@ public class SettingsActivity extends ActionBarActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_settings);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+
+        EditText name = (EditText) findViewById(R.id.setting_name);
+        EditText ip = (EditText) findViewById(R.id.setting_ip);
+
+        name.setText(Settings.getInstance().getRadioPiUrl());
+        ip.setText(Settings.getInstance().getRadioPiName());
     }
 
     @Override

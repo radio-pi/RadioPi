@@ -27,7 +27,7 @@ public class RemotePlayer implements Callback.VolumeImplementation, Callback.Mes
         message_callback = callbackClass;
     }
 
-    private static final String BASE_URL = "http://" + Settings.getRadioPiUrl() + ":3000/";
+    private static final String BASE_URL = "http://" + Settings.getInstance().getRadioPiUrl() + ":3000/";
     private static AsyncHttpClient client;
     private static Context static_context;
 

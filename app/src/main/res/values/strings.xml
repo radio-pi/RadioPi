@@ -1,5 +1,7 @@
 <resources>
     <string name="app_name">RadioPi</string>
-
     <string name="action_settings">Settings</string>
+    <string name="save_action">Save</string>
+    <string name="setting_name">Name</string>
+    <string name="setting_ip">Hostname or IP</string>
 </resources>
