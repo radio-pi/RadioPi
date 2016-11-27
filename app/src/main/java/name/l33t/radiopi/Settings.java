@@ -18,7 +18,7 @@ public class Settings {
         return radiopi_url;
     }
 
-    private String radiopi_name = "192.168.17.174";
+    private String radiopi_name = "development";
     public void setRadioPiName(String name){
         name = radiopi_url;
     }
