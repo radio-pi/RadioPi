@@ -10,7 +10,8 @@
     <LinearLayout
         android:orientation="vertical"
         android:layout_width="match_parent"
-        android:layout_height="match_parent" >
+        android:layout_height="match_parent"
+        tools:ignore="UselessParent">
         <ListView
             android:layout_height="0dip"
             android:layout_width="match_parent"
@@ -28,12 +29,11 @@
             android:layout_width="fill_parent"
             android:layout_height="60dp"
             android:orientation="horizontal"
-            android:layout_below="@+id/seekBar"
             android:weightSum="2">
 
             <Button
                 android:layout_height="wrap_content"
-                android:text="Play"
+                android:text="@string/stop_action"
                 android:onClick="play"
                 android:id="@+id/playButton"
                 android:layout_weight="1"
@@ -42,7 +42,7 @@
 
             <Button
                 android:layout_height="wrap_content"
-                android:text="Stop"
+                android:text="@string/stop_action"
                 android:onClick="stop"
                 android:id="@+id/stopButton"
                 android:layout_marginLeft="5dp"

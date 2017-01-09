@@ -7,15 +7,23 @@
         <item name="android:colorAccent">@color/accent</item>
         <item name="android:textColorPrimary">@color/text_primary</item>
         <item name="android:textColor">@color/text_secondary</item>
-        <item name="android:navigationBarColor">@color/black</item>
-
+        <item name="android:editTextColor">@color/text_secondary</item>
+        <item name="android:navigationBarColor">@color/text_secondary</item>
+        <item name="actionBarPopupTheme">@style/ThemeOverlay.AppCompat.Light</item>
 
         <!-- Support library compatibility -->
         <item name="actionBarStyle">@style/ColoredActionBar</item>
+
+        <!-- this makes sure the action mode is painted over not above the action bar -->
+        <item name="android:windowActionModeOverlay">true</item>
+        <item name="android:actionModeBackground">@drawable/action_mode_app_bar_background</item>
+
+        <!-- this makes sure the action mode is painted over not above the action bar -->
+        <item name="windowActionModeOverlay">true</item>
+        <item name="actionModeBackground">@drawable/action_mode_app_bar_background</item>
     </style>
 
-    <style name="ColoredActionBar"
-           parent="@style/Widget.AppCompat.Light.ActionBar.Solid.Inverse">
+    <style name="ColoredActionBar" parent="@style/Widget.AppCompat.Light.ActionBar.Solid.Inverse">
         <item name="android:background">@color/primary</item>
 
         <!-- Support library compatibility -->
