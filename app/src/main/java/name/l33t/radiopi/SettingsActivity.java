@@ -1,12 +1,14 @@
 package name.l33t.radiopi;
 
 import android.os.Bundle;
+import android.support.annotation.StringRes;
 import android.support.v4.app.NavUtils;
 import android.support.v7.app.ActionBarActivity;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.EditText;
+import android.widget.Toast;
 
 public class SettingsActivity extends ActionBarActivity {
     @Override
@@ -20,6 +22,15 @@ public class SettingsActivity extends ActionBarActivity {
 
         name.setText(Settings.getInstance().getRadioPiUrl());
         ip.setText(Settings.getInstance().getRadioPiName());
+    }
+
+    public void save_settings(View view) {
+        EditText name = (EditText) findViewById(R.id.setting_name);
+        EditText ip = (EditText) findViewById(R.id.setting_ip);
+
+        Settings.getInstance().setRadioPiUrl(ip.getText().toString());
+        Settings.getInstance().setRadioPiName(name.getText().toString());
+        Toast.makeText(getApplicationContext(), R.string.successful_save, Toast.LENGTH_SHORT).show();
     }
 
     @Override

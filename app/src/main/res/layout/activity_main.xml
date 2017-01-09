@@ -33,7 +33,7 @@
 
             <Button
                 android:layout_height="wrap_content"
-                android:text="@string/stop_action"
+                android:text="@string/start_action"
                 android:onClick="play"
                 android:id="@+id/playButton"
                 android:layout_weight="1"

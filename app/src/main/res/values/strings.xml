@@ -6,4 +6,5 @@
     <string name="save_action">Save</string>
     <string name="setting_name">Name</string>
     <string name="setting_ip">Hostname or IP</string>
+    <string name="successful_save">Saved!</string>
 </resources>

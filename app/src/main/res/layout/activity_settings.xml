@@ -36,6 +36,7 @@
 
     <Button
         android:text="@string/save_action"
+        android:onClick="save_settings"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:id="@+id/save_ip_and_name" />
