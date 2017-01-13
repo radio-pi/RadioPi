@@ -6,6 +6,7 @@ import android.util.Log;
 import com.loopj.android.http.*;
 import cz.msebera.android.httpclient.Header;
 import cz.msebera.android.httpclient.entity.StringEntity;
+import name.l33t.radiopi.data.DataAccess;
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -27,14 +28,15 @@ public class RemotePlayer implements Callback.VolumeImplementation, Callback.Mes
         message_callback = callbackClass;
     }
 
-    private static final String BASE_URL = "http://" + Settings.getRadioPiUrl() + ":3000/";
+    private String BASE_URL;
     private static AsyncHttpClient client;
     private static Context static_context;
 
-    public RemotePlayer(Context context)
+    public RemotePlayer(Context context, DataAccess db)
     {
         client = new AsyncHttpClient();
         static_context = context;
+        BASE_URL = "http://" + db.getFirstRadioPIDevice().Url() + ":3000/";
     }
 
     public boolean playUrl(String url, final String stationname) {
@@ -81,11 +83,11 @@ public class RemotePlayer implements Callback.VolumeImplementation, Callback.Mes
         return true;
     }
 
-    private static void get(String url, RequestParams params, AsyncHttpResponseHandler responseHandler) {
+    private void get(String url, RequestParams params, AsyncHttpResponseHandler responseHandler) {
         client.get(getAbsoluteUrl(url), params, responseHandler);
     }
 
-    private static void post(String url, JSONObject jsonBody, AsyncHttpResponseHandler responseHandler) {
+    private void post(String url, JSONObject jsonBody, AsyncHttpResponseHandler responseHandler) {
         StringEntity entity = null;
         if (jsonBody != null) {
             try {
@@ -98,7 +100,7 @@ public class RemotePlayer implements Callback.VolumeImplementation, Callback.Mes
         client.post(static_context, getAbsoluteUrl(url), entity, "application/json", responseHandler);
     }
 
-    private static String getAbsoluteUrl(String relativeUrl) {
+    private String getAbsoluteUrl(String relativeUrl) {
         return BASE_URL + relativeUrl;
     }
 

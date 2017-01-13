@@ -8,6 +8,8 @@ import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
 import android.widget.TextView;
 
+import name.l33t.radiopi.data.RadioStationItem;
+
 public class RadioStationArrayAdapter extends ArrayAdapter<RadioStationItem> {
 
     // declaring our ArrayList of items
