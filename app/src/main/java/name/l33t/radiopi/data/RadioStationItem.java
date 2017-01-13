@@ -1,4 +1,4 @@
-package name.l33t.radiopi;
+package name.l33t.radiopi.data;
 
 public class RadioStationItem {
     public static final String _ID = "_id";

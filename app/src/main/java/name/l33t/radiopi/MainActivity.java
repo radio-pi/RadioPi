@@ -22,6 +22,9 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
+import name.l33t.radiopi.data.DataAccess;
+import name.l33t.radiopi.data.RadioStationItem;
+
 
 public class MainActivity extends ActionBarActivity implements Callback.Message, Callback.Volume {
 
@@ -35,12 +38,14 @@ public class MainActivity extends ActionBarActivity implements Callback.Message,
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        rplayer = new RemotePlayer(getApplicationContext());
+        if (db == null) {
+            db = new DataAccess(this);
+        }
+        rplayer = new RemotePlayer(getApplicationContext(), db);
         rplayer.registerMessageCallback(this);
         rplayer.registerVolumeCallback(this);
         //rplayer.getvolume(); // using now websockets
 
-        db = new DataAccess(this);
         new AsyncListTask().execute();
         SeekBar bar = (SeekBar) findViewById(R.id.seekBar);
         bar.setOnSeekBarChangeListener(new seekbarOnChange());
@@ -55,25 +60,23 @@ public class MainActivity extends ActionBarActivity implements Callback.Message,
     @Override
     protected void onStart(){
         super.onStart();
-        if(ws == null)
-        {
+        if(ws == null) {
             try {
-                //ws = new VolumeWebSocket(new URI("ws://radio-pi.l33t.lan:9000"));
-                ws = new VolumeWebSocket(new URI("ws://" + Settings.getInstance().getRadioPiUrl() + ":9000"));
+                ws = new VolumeWebSocket(new URI("ws://" + db.getFirstRadioPIDevice().Url() + ":9000"));
                 ws.registerVolumeCallback(this);
             } catch (URISyntaxException e) {
                 e.printStackTrace();
             }
         }
 
-        if(!ws.isOpen()){
+        if(!ws.isOpen()) {
             ws.connect();
         }
     }
 
     @Override
-    protected void onStop(){
-        if(ws != null && ws.isOpen()){
+    protected void onStop() {
+        if(ws != null && ws.isOpen()) {
             ws.close();
         }
         ws = null;

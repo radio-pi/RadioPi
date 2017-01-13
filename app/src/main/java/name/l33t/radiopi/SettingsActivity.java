@@ -10,26 +10,36 @@ import android.view.View;
 import android.widget.EditText;
 import android.widget.Toast;
 
+import name.l33t.radiopi.data.DataAccess;
+import name.l33t.radiopi.data.RadioStationItem;
+import name.l33t.radiopi.data.SettingRadioPiItem;
+
 public class SettingsActivity extends ActionBarActivity {
+
+    private DataAccess db;
+    private SettingRadioPiItem firstsettingRadioPiItem;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_settings);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 
+        db = new DataAccess(this);
+
         EditText name = (EditText) findViewById(R.id.setting_name);
         EditText ip = (EditText) findViewById(R.id.setting_ip);
 
-        name.setText(Settings.getInstance().getRadioPiUrl());
-        ip.setText(Settings.getInstance().getRadioPiName());
+        firstsettingRadioPiItem = db.getFirstRadioPIDevice();
+        name.setText(firstsettingRadioPiItem.Name());
+        ip.setText(firstsettingRadioPiItem.Url());
     }
 
     public void save_settings(View view) {
         EditText name = (EditText) findViewById(R.id.setting_name);
         EditText ip = (EditText) findViewById(R.id.setting_ip);
 
-        Settings.getInstance().setRadioPiUrl(ip.getText().toString());
-        Settings.getInstance().setRadioPiName(name.getText().toString());
+        db.updateRadioPIDevice(firstsettingRadioPiItem.Id(), name.getText().toString(), ip.getText().toString());
         Toast.makeText(getApplicationContext(), R.string.successful_save, Toast.LENGTH_SHORT).show();
     }
 
