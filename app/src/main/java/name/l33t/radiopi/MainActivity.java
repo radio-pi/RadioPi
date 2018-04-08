@@ -4,8 +4,8 @@ import android.content.Intent;
 import android.database.Cursor;
 import android.os.AsyncTask;
 import android.os.Build;
-import android.support.v7.app.ActionBarActivity;
 import android.os.Bundle;
+import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -26,7 +26,7 @@ import name.l33t.radiopi.data.DataAccess;
 import name.l33t.radiopi.data.RadioStationItem;
 
 
-public class MainActivity extends ActionBarActivity implements Callback.Message, Callback.Volume {
+public class MainActivity extends AppCompatActivity implements Callback.Message, Callback.Volume {
 
     private RemotePlayer rplayer;
     private DataAccess db;
@@ -37,6 +37,7 @@ public class MainActivity extends ActionBarActivity implements Callback.Message,
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+        getSupportActionBar().setDisplayShowTitleEnabled(true);
 
         if (db == null) {
             db = new DataAccess(this);
@@ -129,12 +130,8 @@ public class MainActivity extends ActionBarActivity implements Callback.Message,
     public void setVolume(Integer vol) {
         SeekBar bar = (SeekBar) findViewById(R.id.seekBar);
 
-        // don't update progress bar if the volume
-        // difference is only 2 this only happens
-        // due to rounding errors
-        if((bar.getProgress() - vol) < 2) {
-            bar.setProgress(vol);
-        }
+        Log.d("setvolume", "from:" + bar.getProgress()  +  "to: " + vol);
+        bar.setProgress(vol);
     }
 
     @Override

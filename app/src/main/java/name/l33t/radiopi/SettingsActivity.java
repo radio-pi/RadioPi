@@ -3,7 +3,7 @@ package name.l33t.radiopi;
 import android.os.Bundle;
 import android.support.annotation.StringRes;
 import android.support.v4.app.NavUtils;
-import android.support.v7.app.ActionBarActivity;
+import android.support.v7.app.AppCompatActivity;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -14,7 +14,7 @@ import name.l33t.radiopi.data.DataAccess;
 import name.l33t.radiopi.data.RadioStationItem;
 import name.l33t.radiopi.data.SettingRadioPiItem;
 
-public class SettingsActivity extends ActionBarActivity {
+public class SettingsActivity extends AppCompatActivity {
 
     private DataAccess db;
     private SettingRadioPiItem firstsettingRadioPiItem;
@@ -24,6 +24,7 @@ public class SettingsActivity extends ActionBarActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_settings);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+        getSupportActionBar().setDisplayShowTitleEnabled(true);
 
         db = new DataAccess(this);
 

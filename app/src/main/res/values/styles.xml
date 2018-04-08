@@ -23,7 +23,7 @@
         <item name="actionModeBackground">@drawable/action_mode_app_bar_background</item>
     </style>
 
-    <style name="ColoredActionBar" parent="@style/Widget.AppCompat.Light.ActionBar.Solid.Inverse">
+    <style name="ColoredActionBar" parent="@android:style/Widget.DeviceDefault.Light.ActionBar.Solid.Inverse">
         <item name="android:background">@color/primary</item>
 
         <!-- Support library compatibility -->
