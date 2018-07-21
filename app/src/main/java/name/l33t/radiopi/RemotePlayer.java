@@ -8,15 +8,17 @@ import cz.msebera.android.httpclient.Header;
 import cz.msebera.android.httpclient.entity.StringEntity;
 import name.l33t.radiopi.data.DataAccess;
 
+import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.io.UnsupportedEncodingException;
 
-public class RemotePlayer implements Callback.VolumeImplementation, Callback.MessageImplementation {
+public class RemotePlayer implements Callback.VolumeImplementation, Callback.MessageImplementation, Callback.StationRefreshImplementation {
 
     Callback.Volume volume_callback;
     Callback.Message message_callback;
+    Callback.StationRefresh station_refresh;
 
     @Override
     public void registerVolumeCallback(Callback.Volume callbackClass) {
@@ -26,6 +28,11 @@ public class RemotePlayer implements Callback.VolumeImplementation, Callback.Mes
     @Override
     public void registerMessageCallback(Callback.Message callbackClass) {
         message_callback = callbackClass;
+    }
+
+    @Override
+    public void registerStationRefreshCallback(Callback.StationRefresh callbackClass) {
+        station_refresh = callbackClass;
     }
 
     private String BASE_URL;
@@ -128,7 +135,6 @@ public class RemotePlayer implements Callback.VolumeImplementation, Callback.Mes
     }
 
     public boolean getvolume() {
-
         get("volume", null, new AsyncHttpResponseHandler() {
             @Override
             public void onSuccess(int statusCode, Header[] headers, byte[] response) {
@@ -151,4 +157,33 @@ public class RemotePlayer implements Callback.VolumeImplementation, Callback.Mes
         });
         return true;
     }
+
+    public void syncStationList() {
+        get("streamurls", null, new AsyncHttpResponseHandler() {
+            @Override
+            public void onSuccess(int statusCode, Header[] headers, byte[] response) {
+                DataAccess dataAccess = new DataAccess(static_context);
+                try {
+                    JSONArray jRestponse = new JSONArray(new String(response));
+                    for(int i = 0; i < jRestponse.length(); i++){
+                        String url = jRestponse.getJSONObject(i).getString("url");
+                        String name = jRestponse.getJSONObject(i).getString("name");
+                        Integer orderId = jRestponse.getJSONObject(i).getInt("orderid");
+                        dataAccess.replaceRadioPIDevice(name, url, orderId);
+                        Log.d("syncStationList", "check "+ url);
+                        station_refresh.refreshStationList();
+                    }
+                    Log.d("syncStationList", "updated database");
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                }
+            }
+            @Override
+            public void onFailure(int statusCode, Header[] headers, byte[] errorResponse, Throwable e) {
+                Log.d("syncStationList", "something went wrong", e);
+            }
+        });
+    }
+
+
 }

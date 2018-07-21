@@ -6,6 +6,7 @@ import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteException;
 import android.database.sqlite.SQLiteOpenHelper;
+import android.util.Log;
 
 public class DataAccess extends SQLiteOpenHelper {
 
@@ -72,6 +73,13 @@ public class DataAccess extends SQLiteOpenHelper {
         onCreate(db);
     }
 
+    public void clearRadioStationList(){
+        SQLiteDatabase db = GetDB();
+        db.execSQL(TABLE_RADIOSTATION_ENTITY_DROP);
+        db.execSQL(TABLE_RADIOSTATION_ENTITY_CREATE);
+        db.close();
+    }
+
     public long insertRadioPIDevice(String name, String url, SQLiteDatabase db) {
         long rowId = -1;
         try {
@@ -82,6 +90,36 @@ public class DataAccess extends SQLiteOpenHelper {
 
             // in die Tabelle  einfuegen
             rowId = db.insert(TABLE_NAME_RADIOPI_DEVICE, null, values);
+        } catch (SQLiteException e) {
+            //do something, something smart perhaps
+        }
+        return rowId;
+    }
+
+    public long replaceRadioPIDevice(String name, String url, Integer orderId) {
+        SQLiteDatabase db = GetDB();
+        long rowId = -1;
+        try {
+            // die zu speichernden Werte
+            ContentValues values = new ContentValues();
+            values.put(RadioStationItem.STATION_NAME, name);
+            values.put(RadioStationItem.STATION_URL, url);
+            values.put(RadioStationItem.STATION_ORDERID, orderId);
+
+            Cursor cursor = db.query(TABLE_NAME_STATIONS, new String[] {RadioStationItem.STATION_URL},  RadioStationItem.STATION_URL + "=?", new String[] { url }, null, null, null);
+            if(cursor.getCount() == 0){
+                // new entry
+                rowId = db.insert(TABLE_NAME_STATIONS, null, values);
+                Log.d("syncStationListDA", "create "+ url);
+            }
+            else {
+                // update
+                cursor.moveToFirst();
+                db.update(TABLE_NAME_STATIONS, values, RadioStationItem._ID + "=?", new String[]{ String.valueOf(cursor.getInt(0))});
+                Log.d("syncStationListDA", "update "+ url);
+            }
+            cursor.close();
+            db.close();
         } catch (SQLiteException e) {
             //do something, something smart perhaps
         }

@@ -19,6 +19,16 @@ public class Callback {
     interface MessageImplementation {
         void registerMessageCallback(Message callbackClass);
     }
+
+
+    /*Setup for StationRefresh callback*/
+    interface StationRefresh {
+        void refreshStationList();
+    }
+
+    interface StationRefreshImplementation {
+        void registerStationRefreshCallback(StationRefresh callbackClass);
+    }
 }
 
 

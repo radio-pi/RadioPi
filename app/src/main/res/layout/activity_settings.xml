@@ -40,4 +40,11 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:id="@+id/save_ip_and_name" />
+
+    <Button
+        android:text="@string/drop_station_list"
+        android:onClick="drop_station_list"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:id="@+id/drop_station_list" />
 </LinearLayout>

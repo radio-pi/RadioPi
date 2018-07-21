@@ -1,7 +1,6 @@
 package name.l33t.radiopi;
 
 import android.os.Bundle;
-import android.support.annotation.StringRes;
 import android.support.v4.app.NavUtils;
 import android.support.v7.app.AppCompatActivity;
 import android.view.Menu;
@@ -11,12 +10,11 @@ import android.widget.EditText;
 import android.widget.Toast;
 
 import name.l33t.radiopi.data.DataAccess;
-import name.l33t.radiopi.data.RadioStationItem;
 import name.l33t.radiopi.data.SettingRadioPiItem;
 
 public class SettingsActivity extends AppCompatActivity {
 
-    private DataAccess db;
+    private DataAccess data_access;
     private SettingRadioPiItem firstsettingRadioPiItem;
 
     @Override
@@ -26,12 +24,12 @@ public class SettingsActivity extends AppCompatActivity {
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         getSupportActionBar().setDisplayShowTitleEnabled(true);
 
-        db = new DataAccess(this);
+        data_access = new DataAccess(this);
 
         EditText name = (EditText) findViewById(R.id.setting_name);
         EditText ip = (EditText) findViewById(R.id.setting_ip);
 
-        firstsettingRadioPiItem = db.getFirstRadioPIDevice();
+        firstsettingRadioPiItem = data_access.getFirstRadioPIDevice();
         name.setText(firstsettingRadioPiItem.Name());
         ip.setText(firstsettingRadioPiItem.Url());
     }
@@ -40,8 +38,13 @@ public class SettingsActivity extends AppCompatActivity {
         EditText name = (EditText) findViewById(R.id.setting_name);
         EditText ip = (EditText) findViewById(R.id.setting_ip);
 
-        db.updateRadioPIDevice(firstsettingRadioPiItem.Id(), name.getText().toString(), ip.getText().toString());
+        data_access.updateRadioPIDevice(firstsettingRadioPiItem.Id(), name.getText().toString(), ip.getText().toString());
         Toast.makeText(getApplicationContext(), R.string.successful_save, Toast.LENGTH_SHORT).show();
+    }
+
+    public void drop_station_list(View view){
+        data_access.clearRadioStationList();
+        Toast.makeText(getApplicationContext(), R.string.successful_droped_station_list, Toast.LENGTH_SHORT).show();
     }
 
     @Override

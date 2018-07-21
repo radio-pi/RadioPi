@@ -10,7 +10,9 @@ import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.Window;
 import android.widget.AdapterView;
+import android.widget.ListAdapter;
 import android.widget.ListView;
 import android.widget.SeekBar;
 import android.widget.TextView;
@@ -26,7 +28,7 @@ import name.l33t.radiopi.data.DataAccess;
 import name.l33t.radiopi.data.RadioStationItem;
 
 
-public class MainActivity extends AppCompatActivity implements Callback.Message, Callback.Volume {
+public class MainActivity extends AppCompatActivity implements Callback.Message, Callback.Volume, Callback.StationRefresh {
 
     private RemotePlayer rplayer;
     private DataAccess db;
@@ -45,7 +47,8 @@ public class MainActivity extends AppCompatActivity implements Callback.Message,
         rplayer = new RemotePlayer(getApplicationContext(), db);
         rplayer.registerMessageCallback(this);
         rplayer.registerVolumeCallback(this);
-        //rplayer.getvolume(); // using now websockets
+        rplayer.registerStationRefreshCallback(this);
+        rplayer.syncStationList();
 
         new AsyncListTask().execute();
         SeekBar bar = (SeekBar) findViewById(R.id.seekBar);
@@ -155,6 +158,10 @@ public class MainActivity extends AppCompatActivity implements Callback.Message,
 
     }
 
+    public void refreshStationList(){
+        new MainActivity.AsyncListTask().execute();
+    }
+
     public class OnItemClickListenerListViewItem implements AdapterView.OnItemClickListener {
         @Override
         public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
@@ -164,11 +171,10 @@ public class MainActivity extends AppCompatActivity implements Callback.Message,
     }
 
     private class AsyncListTask extends AsyncTask<Void, Void, RadioStationItem[]> {
-
         @Override
         protected RadioStationItem[] doInBackground(Void... Void) {
-            List<RadioStationItem> radiostationList =  getAllTrackingModel();
-            RadioStationItem[] stationArray = radiostationList.toArray(new RadioStationItem[radiostationList.size()]);
+            List<RadioStationItem> radioStationItemList = getAllTrackingModel();
+            RadioStationItem[] stationArray = radioStationItemList.toArray(new RadioStationItem[radioStationItemList.size()]);
             Log.d("stationArray", Arrays.deepToString(stationArray));
             return stationArray;
         }
