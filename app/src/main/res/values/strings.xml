@@ -1,0 +1,18 @@
+<resources>
+    <string name="app_name">RadioPi</string>
+    <string name="title_activity_radio_station_list">Radiostationen</string>
+    <string name="img_radio_station_playing">Bild der aktuell spielenden Radiostation</string>
+    <string name="play_stop">Play/Stop</string>
+
+    <string name="connection_prefs">Verbindung</string>
+    <string name="server_ip_pref">Serveradresse</string>
+    <string name="settings">Einstellungen</string>
+    <string name="select_station">Radiostation auswählen</string>
+    <string name="ip_not_set">Verbindung Fehlgeschlagen, es ist keine Server IP Adresse in den Einstellungen gesetzt.</string>
+    <string name="add_station">Radiostation hizufügen</string>
+    <string name="save">Speichern</string>
+    <string name="cancel">Abbrechen</string>
+    <string name="name">Name</string>
+    <string name="radio_stream_url">Radio Stream Url</string>
+    <string name="server_ip">IP Adresse des Raspberry Pi, der an einen Lautsprecher angeschlossen ist.</string>
+</resources>

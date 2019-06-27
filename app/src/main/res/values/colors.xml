@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--<resources>
+    <color name="colorPrimary">#008577</color>
+    <color name="colorPrimaryDark">#00574B</color>
+    <color name="colorAccent">#D81B60</color>
+</resources>-->
+
+<!-- an logo angepasst -->
+<resources>
+<color name="colorPrimary">#FFE885</color>
+<color name="colorPrimaryDark">#cab656</color>
+<color name="colorPrimaryLight">#ffffb6</color>
+<color name="colorAccent">#b71c1c</color>
+<color name="colorBackground">#f5f5f5</color>
+<color name="colorBackgroundDark">#e0e0e0</color>
+</resources>
+
+
+
+
