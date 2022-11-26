@@ -12,10 +12,12 @@ import android.os.AsyncTask;
 import android.os.Build;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
-import android.support.design.widget.Snackbar;
-import android.support.v4.app.NotificationCompat;
-import android.support.v4.app.NotificationManagerCompat;
-import android.support.v7.app.AppCompatActivity;
+import com.google.android.material.snackbar.Snackbar;
+
+import androidx.annotation.NonNull;
+import androidx.core.app.NotificationCompat;
+import androidx.core.app.NotificationManagerCompat;
+import androidx.appcompat.app.AppCompatActivity;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -25,9 +27,11 @@ import android.widget.SeekBar;
 import android.widget.TextView;
 
 import java.io.IOException;
+import java.io.InputStream;
 import java.lang.ref.WeakReference;
 import java.net.URI;
 import java.net.URISyntaxException;
+import java.net.URL;
 import java.util.List;
 
 import name.l33t.radiopi.database.AppDatabase;
@@ -146,7 +150,7 @@ public class MainActivity extends AppCompatActivity implements Callback.Volume, 
     }
 
     @Override
-    public boolean onCreateOptionsMenu(Menu menu) {
+    public boolean onCreateOptionsMenu(@NonNull Menu menu) {
         getMenuInflater().inflate(R.menu.menu_main, menu);
         return true;
     }
@@ -214,8 +218,8 @@ public class MainActivity extends AppCompatActivity implements Callback.Volume, 
         isPlaying = !streamkey.equals(""); // If streamkey is empty, no stream is playing.
         currentlyPlayingStationUrl = streamkey;
         new SetRadioStationImageTask(findViewById(R.id.imageView)).execute(currentlyPlayingStationUrl);
-        runOnUiThread(() -> setPlayStopButton());
-        runOnUiThread(() -> setPlayStopButton());
+        runOnUiThread(this::setPlayStopButton);
+        runOnUiThread(this::setPlayStopButton);
     }
 
     //endregion
@@ -242,8 +246,15 @@ public class MainActivity extends AppCompatActivity implements Callback.Volume, 
                     imageUri = station.getImg();
                 }
             }
+            if(imageUri == null)
+            {
+                return null; // early return for empty url
+            }
+
             try {
-                stationImage = BitmapFactory.decodeStream(new java.net.URL(imageUri).openStream());
+                URL url = new URL(imageUri);
+                InputStream stream = url.openStream();
+                stationImage = BitmapFactory.decodeStream(stream);
             } catch (IOException e) {
                 e.printStackTrace();
             }
@@ -292,7 +303,7 @@ public class MainActivity extends AppCompatActivity implements Callback.Volume, 
             isPlaying = true;
             view.setBackgroundResource(R.drawable.stop);
             new StartPlayingTask(view).execute(currentlyPlayingStationUrl);
-            if(currentlyPlayingStationTitle != null && currentlyPlayingStationTitle != "") {
+            if(currentlyPlayingStationTitle != null && !currentlyPlayingStationTitle.equals("")) {
                 createNotification(currentlyPlayingStationTitle);
             }
         }
@@ -349,7 +360,7 @@ public class MainActivity extends AppCompatActivity implements Callback.Volume, 
     private void createNotification(String stationTitle) {
         Intent mainActivityIntent = new Intent(this, MainActivity.class);
         PendingIntent pendingIntent = PendingIntent
-                .getActivity(this, NOTIFICATION_PENDING_INTENT_ID, mainActivityIntent, PendingIntent.FLAG_UPDATE_CURRENT);
+                .getActivity(this, NOTIFICATION_PENDING_INTENT_ID, mainActivityIntent, PendingIntent.FLAG_MUTABLE);
 
         Notification notification =  new NotificationCompat.Builder(this, CHANNEL_ID)
                 .setContentTitle("RadioPi Player")

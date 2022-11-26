@@ -29,7 +29,7 @@ public class WebSocket extends WebSocketClient implements Callback.NowPlayingImp
     @Override
     public void onMessage(String msg) {
         Log.d("onMessage", "got a new message: " + msg);
-        JSONObject jmsg = null;
+        JSONObject jmsg;
         try {
             jmsg = new JSONObject(msg);
 
@@ -40,12 +40,12 @@ public class WebSocket extends WebSocketClient implements Callback.NowPlayingImp
             }
 
             String title = jmsg.optString("title");
-            if(null != titleCallback && "" != title){
+            if(null != titleCallback && !title.equals("")){
                 titleCallback.updateTitle(title);
             }
 
             String streamkey = jmsg.optString("stream_key");
-            if(null != nowPlayingCallback && "" != streamkey){
+            if(null != nowPlayingCallback && !streamkey.equals("")){
                 nowPlayingCallback.updateNowPlaying(streamkey);
             }
 
