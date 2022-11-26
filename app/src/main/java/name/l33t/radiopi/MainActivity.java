@@ -452,7 +452,7 @@ public class MainActivity extends AppCompatActivity implements Callback.Volume, 
     private static void ensureApiAvailable() {
         String ip = defaultSharedPreferences.getString("ip", "");
         if(api == null || api.getVolume() == -1) {
-            api = new WebApi("http://" + ip + ":3000");
+            api = new WebApi("http://" + ip + ":8000");
         }
     }
 
@@ -461,7 +461,7 @@ public class MainActivity extends AppCompatActivity implements Callback.Volume, 
         protected Void doInBackground(String... urls) {
             if (urls[0] != null && !urls[0].equals("")) {
                 if (api == null || api.getVolume() == -1) {
-                    api = new WebApi("http://" + urls[0] + ":3000");
+                    api = new WebApi("http://" + urls[0] + ":8000");
                 }
             }
             return null;
@@ -474,7 +474,7 @@ public class MainActivity extends AppCompatActivity implements Callback.Volume, 
             if(ws == null || !ws.isOpen()) {
                 try {
                     String ip = defaultSharedPreferences.getString("ip", "");
-                    ws = new WebSocket(new URI("ws://" + ip + ":9000"));
+                    ws = new WebSocket(new URI("ws://" + ip + ":8000" + "/ws"));
                 } catch (URISyntaxException e) {
                     Log.e("ConnectToWebSocketTask", "Connection to WebSocket failed.", e);
                     ws = null;
