@@ -27,7 +27,6 @@ public class WebApi {
 
     /**
      * Create a new WebAPI Wrapper.
-     *
      * The wrapper allows easy access to the
      * API of a RadioPI backend.
      * @param baseURL of a RadioPI backend
@@ -54,7 +53,6 @@ public class WebApi {
 
     /**
      * Start to play a stream.
-     *
      * If a stream is already playing this
      * will stop and replace the stream.
      * @param streamURL of the stream which gets started.
@@ -75,7 +73,6 @@ public class WebApi {
 
     /**
      * Stop all running streams.
-     *
      * Does nothing if no stream is running.
      */
     public void stop(){
@@ -91,7 +88,6 @@ public class WebApi {
 
     /**
      * Get the current stream volume level.
-     *
      * Can return values like -200.
      * @return the volume of the currently playing stream.
      */
@@ -122,7 +118,6 @@ public class WebApi {
 
     /**
      * Set the volume level of the current stream.
-     *
      * Will do nothing if no stream is running.
      * @param volume of the current stream.
      */
