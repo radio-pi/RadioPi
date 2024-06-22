@@ -68,7 +68,7 @@ public class WebApi {
         try {
             return client.newCall(req).execute().isSuccessful();
         } catch (IOException e) {
-            Log.d("WebApi", "Error: playing stream" + e.toString());
+            Log.d("WebApi", "Error: playing stream", e);
         }
         return false;
     }
@@ -85,7 +85,7 @@ public class WebApi {
         try {
             client.newCall(req).execute();
         } catch (IOException e) {
-            Log.d("WebApi", "Error: stopping stream" + e.toString());
+            Log.d("WebApi", "Error: stopping stream", e);
         }
     }
 
@@ -109,13 +109,13 @@ public class WebApi {
                 JSONObject json = new JSONObject(response.body().string());
                 Integer volume = json.optInt("volume", 0);
 
-                Log.d("WebApi", "Getting Volume returned: " + volume.toString());
+                Log.d("WebApi", "Getting Volume returned: " + volume);
                 return  volume;
             }
         } catch (IOException e) {
-            Log.d("WebApi", "Error (IOException): stopping stream" + e.toString());
+            Log.d("WebApi", "Error (IOException): stopping stream", e);
         } catch (JSONException e) {
-            Log.d("WebApi", "Error (JSONException): stopping stream" + e.toString());
+            Log.d("WebApi", "Error (JSONException): stopping stream", e);
         }
         return -1;
     }
@@ -134,7 +134,7 @@ public class WebApi {
         try {
             client.newCall(req).execute();
         } catch (IOException e) {
-            Log.d("WebApi", "Error: stopping stream" + e.toString());
+            Log.d("WebApi", "Error: stopping stream", e);
         }
     }
 
