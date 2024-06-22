@@ -4,6 +4,7 @@ import android.app.Notification;
 import android.app.NotificationChannel;
 import android.app.NotificationManager;
 import android.app.PendingIntent;
+import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
@@ -12,7 +13,6 @@ import android.graphics.BitmapFactory;
 import android.os.AsyncTask;
 import android.os.Build;
 import android.os.Bundle;
-import android.preference.PreferenceManager;
 
 import com.google.android.material.snackbar.Snackbar;
 
@@ -64,8 +64,8 @@ public class MainActivity extends AppCompatActivity implements Callback.Volume, 
     @Override
     protected void onStart() {
         super.onStart();
-        defaultSharedPreferences = PreferenceManager.getDefaultSharedPreferences(this);
 
+        defaultSharedPreferences = getSharedPreferences(getPackageName() + "_preferences", Context.MODE_PRIVATE);
         String ip = defaultSharedPreferences.getString("ip", "");
         if (ip.isEmpty()) {
             Snackbar.make(findViewById(R.id.titleTextView), getString(R.string.ip_not_set), Snackbar.LENGTH_INDEFINITE)
@@ -95,7 +95,8 @@ public class MainActivity extends AppCompatActivity implements Callback.Volume, 
         setContentView(R.layout.activity_main);
         db = AppDatabase.getInstance(getApplicationContext());
 
-        String ip = PreferenceManager.getDefaultSharedPreferences(this).getString("ip", "");
+        defaultSharedPreferences = getSharedPreferences(getPackageName() + "_preferences", Context.MODE_PRIVATE);
+        String ip = defaultSharedPreferences.getString("ip", "");
         new ConnectToApiTask().execute(ip);
         createNotificationChannel();
         if (getIntent() != null && getIntent().getExtras() != null &&
