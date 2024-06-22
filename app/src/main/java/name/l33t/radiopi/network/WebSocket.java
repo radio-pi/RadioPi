@@ -9,7 +9,6 @@ import org.json.JSONObject;
 
 import java.net.URI;
 
-
 public class WebSocket extends WebSocketClient implements Callback.NowPlayingImplementation, Callback.TitleImplementation, Callback.VolumeImplementation {
 
     private Callback.NowPlaying nowPlayingCallback;
@@ -22,17 +21,16 @@ public class WebSocket extends WebSocketClient implements Callback.NowPlayingImp
 
     @Override
     public void onOpen(ServerHandshake serverHandshake) {
-        Log.d("onOpen", "something went open");
+        Log.d("WebSocket", "Open callback");
         this.send("volume");
     }
 
     @Override
     public void onMessage(String msg) {
-        Log.d("onMessage", "got a new message: " + msg);
+        Log.d("WebSocket", "Got a new message: " + msg);
         JSONObject jmsg;
         try {
             jmsg = new JSONObject(msg);
-
 
             Integer volume = jmsg.optInt("volume", -1337);
             if(null != volumeCallback && -1337 != volume){
@@ -50,18 +48,18 @@ public class WebSocket extends WebSocketClient implements Callback.NowPlayingImp
             }
 
         } catch (JSONException e) {
-            e.printStackTrace();
+            Log.d("WebSocket", "Extracting JSON went wrong", e);
         }
     }
 
     @Override
     public void onClose(int i, String s, boolean b) {
-        Log.d("onClose", "something went closed " + s);
+        Log.d("WebSocket", "Closed " + s);
     }
 
     @Override
     public void onError(Exception e) {
-        Log.d("onError", "something went wrong", e);
+        Log.d("WebSocket", "Something went wrong", e);
     }
 
     @Override
