@@ -40,12 +40,12 @@ public class WebSocket extends WebSocketClient implements Callback.NowPlayingImp
             }
 
             String title = jmsg.optString("title");
-            if(null != titleCallback && !title.equals("")){
+            if(null != titleCallback && !title.isEmpty()){
                 titleCallback.updateTitle(title);
             }
 
             String streamkey = jmsg.optString("stream_key");
-            if(null != nowPlayingCallback && !streamkey.equals("")){
+            if(null != nowPlayingCallback && !streamkey.isEmpty()){
                 nowPlayingCallback.updateNowPlaying(streamkey);
             }
 
