@@ -11,7 +11,6 @@ import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.os.AsyncTask;
-import android.os.Build;
 import android.os.Bundle;
 
 import com.google.android.material.snackbar.Snackbar;
@@ -340,28 +339,20 @@ public class MainActivity extends AppCompatActivity implements Callback.Volume, 
         if (progress == volume) {
             return;
         }
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-            volumeSeekBar.setProgress(volume, true);
-        } else {
-            volumeSeekBar.setProgress(volume);
-        }
+        volumeSeekBar.setProgress(volume, true);
     }
 
     private void createNotificationChannel() {
-        // Create the NotificationChannel, but only on API 26+ because
-        // the NotificationChannel class is new and not in the support library
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-            CharSequence name = "channel_name";
-            String description = "channel_description";
-            NotificationChannel channel = new NotificationChannel(CHANNEL_ID, name,
-                    NotificationManager.IMPORTANCE_DEFAULT);
-            channel.setDescription(description);
+        CharSequence name = "channel_name";
+        String description = "channel_description";
+        NotificationChannel channel = new NotificationChannel(CHANNEL_ID, name,
+                NotificationManager.IMPORTANCE_DEFAULT);
+        channel.setDescription(description);
 
-            // Register the channel with the system; you can't change the importance
-            // or other notification behaviours after this
-            NotificationManager notificationManager = getSystemService(NotificationManager.class);
-            notificationManager.createNotificationChannel(channel);
-        }
+        // Register the channel with the system; you can't change the importance
+        // or other notification behaviours after this
+        NotificationManager notificationManager = getSystemService(NotificationManager.class);
+        notificationManager.createNotificationChannel(channel);
     }
 
     private void createNotification(String stationTitle) {
