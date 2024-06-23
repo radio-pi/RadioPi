@@ -27,7 +27,6 @@ public class WebApi {
 
     /**
      * Create a new WebAPI Wrapper.
-     *
      * The wrapper allows easy access to the
      * API of a RadioPI backend.
      * @param baseURL of a RadioPI backend
@@ -54,7 +53,6 @@ public class WebApi {
 
     /**
      * Start to play a stream.
-     *
      * If a stream is already playing this
      * will stop and replace the stream.
      * @param streamURL of the stream which gets started.
@@ -68,14 +66,13 @@ public class WebApi {
         try {
             return client.newCall(req).execute().isSuccessful();
         } catch (IOException e) {
-            Log.d("WebApi", "Error: playing stream" + e.toString());
+            Log.d("WebApi", "Error: playing stream", e);
         }
         return false;
     }
 
     /**
      * Stop all running streams.
-     *
      * Does nothing if no stream is running.
      */
     public void stop(){
@@ -85,13 +82,12 @@ public class WebApi {
         try {
             client.newCall(req).execute();
         } catch (IOException e) {
-            Log.d("WebApi", "Error: stopping stream" + e.toString());
+            Log.d("WebApi", "Error: stopping stream", e);
         }
     }
 
     /**
      * Get the current stream volume level.
-     *
      * Can return values like -200.
      * @return the volume of the currently playing stream.
      */
@@ -109,20 +105,19 @@ public class WebApi {
                 JSONObject json = new JSONObject(response.body().string());
                 Integer volume = json.optInt("volume", 0);
 
-                Log.d("WebApi", "Getting Volume returned: " + volume.toString());
+                Log.d("WebApi", "Getting Volume returned: " + volume);
                 return  volume;
             }
         } catch (IOException e) {
-            Log.d("WebApi", "Error (IOException): stopping stream" + e.toString());
+            Log.d("WebApi", "Error (IOException): stopping stream", e);
         } catch (JSONException e) {
-            Log.d("WebApi", "Error (JSONException): stopping stream" + e.toString());
+            Log.d("WebApi", "Error (JSONException): stopping stream", e);
         }
         return -1;
     }
 
     /**
      * Set the volume level of the current stream.
-     *
      * Will do nothing if no stream is running.
      * @param volume of the current stream.
      */
@@ -134,7 +129,7 @@ public class WebApi {
         try {
             client.newCall(req).execute();
         } catch (IOException e) {
-            Log.d("WebApi", "Error: stopping stream" + e.toString());
+            Log.d("WebApi", "Error: stopping stream", e);
         }
     }
 

@@ -4,20 +4,23 @@ import android.app.Notification;
 import android.app.NotificationChannel;
 import android.app.NotificationManager;
 import android.app.PendingIntent;
+import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.os.AsyncTask;
-import android.os.Build;
 import android.os.Bundle;
-import android.preference.PreferenceManager;
+
 import com.google.android.material.snackbar.Snackbar;
 
 import androidx.annotation.NonNull;
+import androidx.core.app.ActivityCompat;
 import androidx.core.app.NotificationCompat;
 import androidx.core.app.NotificationManagerCompat;
 import androidx.appcompat.app.AppCompatActivity;
+
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -60,10 +63,10 @@ public class MainActivity extends AppCompatActivity implements Callback.Volume, 
     @Override
     protected void onStart() {
         super.onStart();
-        defaultSharedPreferences = PreferenceManager.getDefaultSharedPreferences(this);
 
+        defaultSharedPreferences = getSharedPreferences(getPackageName() + "_preferences", Context.MODE_PRIVATE);
         String ip = defaultSharedPreferences.getString("ip", "");
-        if (ip != null && ip.equals("")) {
+        if (ip.isEmpty()) {
             Snackbar.make(findViewById(R.id.titleTextView), getString(R.string.ip_not_set), Snackbar.LENGTH_INDEFINITE)
                     .show();
         } else {
@@ -71,16 +74,16 @@ public class MainActivity extends AppCompatActivity implements Callback.Volume, 
         }
         setPlayStopButton();
 
-        if(currentlyPlayingStationTitle != null && !currentlyPlayingStationTitle.equals("")) {
+        if (currentlyPlayingStationTitle != null && !currentlyPlayingStationTitle.isEmpty()) {
             setTitleTextView(currentlyPlayingStationTitle);
             createNotification(currentlyPlayingStationTitle);
         }
 
-        if(currentlyPlayingStationUrl != null && !currentlyPlayingStationUrl.equals("")) {
+        if (currentlyPlayingStationUrl != null && !currentlyPlayingStationUrl.isEmpty()) {
             new SetRadioStationImageTask(findViewById(R.id.imageView)).execute(currentlyPlayingStationUrl);
         }
 
-        if(currentVolume > 0) {
+        if (currentVolume > 0) {
             setVolumeSeekBar(currentVolume);
         }
     }
@@ -91,15 +94,16 @@ public class MainActivity extends AppCompatActivity implements Callback.Volume, 
         setContentView(R.layout.activity_main);
         db = AppDatabase.getInstance(getApplicationContext());
 
-        String ip = PreferenceManager.getDefaultSharedPreferences(this).getString("ip", "");
+        defaultSharedPreferences = getSharedPreferences(getPackageName() + "_preferences", Context.MODE_PRIVATE);
+        String ip = defaultSharedPreferences.getString("ip", "");
         new ConnectToApiTask().execute(ip);
         createNotificationChannel();
-        if(getIntent() != null && getIntent().getExtras() != null &&
-                getIntent().getAction() != null && getIntent().getAction().equals("name.l33t.radiopi.PLAY_STREAM")){
+        if (getIntent() != null && getIntent().getExtras() != null &&
+                getIntent().getAction() != null && getIntent().getAction().equals("name.l33t.radiopi.PLAY_STREAM")) {
             String newPlayingStationUrl = getIntent().getExtras().getString("RadioStationUrl");
             Log.d("Main", "got intent " + getIntent().toString() + " with extras " + newPlayingStationUrl);
 
-            if(newPlayingStationUrl != null && !newPlayingStationUrl.equals("")) {
+            if (newPlayingStationUrl != null && !newPlayingStationUrl.isEmpty()) {
                 currentlyPlayingStationUrl = newPlayingStationUrl;
                 new SwitchChannelTask().execute(currentlyPlayingStationUrl);
                 new SetRadioStationImageTask(findViewById(R.id.imageView)).execute(currentlyPlayingStationUrl);
@@ -127,10 +131,13 @@ public class MainActivity extends AppCompatActivity implements Callback.Volume, 
             int volume;
 
             @Override
-            public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {volume = progress;}
+            public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
+                volume = progress;
+            }
 
             @Override
-            public void onStartTrackingTouch(SeekBar seekBar) {}
+            public void onStartTrackingTouch(SeekBar seekBar) {
+            }
 
             @Override
             public void onStopTrackingTouch(SeekBar seekBar) {
@@ -190,7 +197,7 @@ public class MainActivity extends AppCompatActivity implements Callback.Volume, 
     @Override
     public void updateVolume(int volume) {
         Log.d("MainActivity", "Update Volume: " + volume);
-        if(volume >= 0) {
+        if (volume >= 0) {
             isMuted = volume == 0;
             currentVolume = volume;
 
@@ -215,7 +222,7 @@ public class MainActivity extends AppCompatActivity implements Callback.Volume, 
     @Override
     public void updateNowPlaying(String streamkey) {
         Log.d("MainActivity", "Update Now playing stream key: " + streamkey);
-        isPlaying = !streamkey.equals(""); // If streamkey is empty, no stream is playing.
+        isPlaying = !streamkey.isEmpty(); // If streamkey is empty, no stream is playing.
         currentlyPlayingStationUrl = streamkey;
         new SetRadioStationImageTask(findViewById(R.id.imageView)).execute(currentlyPlayingStationUrl);
         runOnUiThread(this::setPlayStopButton);
@@ -241,13 +248,12 @@ public class MainActivity extends AppCompatActivity implements Callback.Volume, 
             String imageUri = null;
             Bitmap stationImage = null;
             List<RadioStation> stations = db.radioStationDao().getAll();
-            for(RadioStation station : stations) {
+            for (RadioStation station : stations) {
                 if (station.getUrl().equals(stationUrls[0])) {
                     imageUri = station.getImg();
                 }
             }
-            if(imageUri == null)
-            {
+            if (imageUri == null) {
                 return null; // early return for empty url
             }
 
@@ -263,7 +269,7 @@ public class MainActivity extends AppCompatActivity implements Callback.Volume, 
 
         @Override
         protected void onPostExecute(Bitmap bitmap) {
-            ImageView view = ((ImageView)radioStationImageView.get());
+            ImageView view = ((ImageView) radioStationImageView.get());
             if (bitmap != null && view != null) {
                 view.setImageBitmap(bitmap);
             } else if (bitmap == null && view != null) {
@@ -275,7 +281,7 @@ public class MainActivity extends AppCompatActivity implements Callback.Volume, 
     private void switchMuted() {
         MuteTask muteTask = new MuteTask();
         View view = findViewById(R.id.muteButton);
-        if(isMuted) {
+        if (isMuted) {
             //Unmute
             isMuted = false;
             view.setBackgroundResource(R.drawable.volume);
@@ -303,7 +309,7 @@ public class MainActivity extends AppCompatActivity implements Callback.Volume, 
             isPlaying = true;
             view.setBackgroundResource(R.drawable.stop);
             new StartPlayingTask(view).execute(currentlyPlayingStationUrl);
-            if(currentlyPlayingStationTitle != null && !currentlyPlayingStationTitle.equals("")) {
+            if (currentlyPlayingStationTitle != null && !currentlyPlayingStationTitle.isEmpty()) {
                 createNotification(currentlyPlayingStationTitle);
             }
         }
@@ -333,28 +339,20 @@ public class MainActivity extends AppCompatActivity implements Callback.Volume, 
         if (progress == volume) {
             return;
         }
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-            volumeSeekBar.setProgress(volume, true);
-        } else {
-            volumeSeekBar.setProgress(volume);
-        }
+        volumeSeekBar.setProgress(volume, true);
     }
 
     private void createNotificationChannel() {
-        // Create the NotificationChannel, but only on API 26+ because
-        // the NotificationChannel class is new and not in the support library
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-            CharSequence name = "channel_name";
-            String description = "channel_description";
-            NotificationChannel channel = new NotificationChannel(CHANNEL_ID, name,
-                    NotificationManager.IMPORTANCE_DEFAULT);
-            channel.setDescription(description);
+        CharSequence name = "channel_name";
+        String description = "channel_description";
+        NotificationChannel channel = new NotificationChannel(CHANNEL_ID, name,
+                NotificationManager.IMPORTANCE_DEFAULT);
+        channel.setDescription(description);
 
-            // Register the channel with the system; you can't change the importance
-            // or other notification behaviours after this
-            NotificationManager notificationManager = getSystemService(NotificationManager.class);
-            notificationManager.createNotificationChannel(channel);
-        }
+        // Register the channel with the system; you can't change the importance
+        // or other notification behaviours after this
+        NotificationManager notificationManager = getSystemService(NotificationManager.class);
+        notificationManager.createNotificationChannel(channel);
     }
 
     private void createNotification(String stationTitle) {
@@ -362,7 +360,7 @@ public class MainActivity extends AppCompatActivity implements Callback.Volume, 
         PendingIntent pendingIntent = PendingIntent
                 .getActivity(this, NOTIFICATION_PENDING_INTENT_ID, mainActivityIntent, PendingIntent.FLAG_MUTABLE);
 
-        Notification notification =  new NotificationCompat.Builder(this, CHANNEL_ID)
+        Notification notification = new NotificationCompat.Builder(this, CHANNEL_ID)
                 .setContentTitle("RadioPi Player")
                 .setTicker("RadioPi Player")
                 .setContentText(stationTitle)
@@ -373,6 +371,16 @@ public class MainActivity extends AppCompatActivity implements Callback.Volume, 
                 .setContentIntent(pendingIntent)
                 .build();
 
+        if (ActivityCompat.checkSelfPermission(this, android.Manifest.permission.POST_NOTIFICATIONS) != PackageManager.PERMISSION_GRANTED) {
+            // TODO: Consider calling
+            //    ActivityCompat#requestPermissions
+            // here to request the missing permissions, and then overriding
+            //   public void onRequestPermissionsResult(int requestCode, String[] permissions,
+            //                                          int[] grantResults)
+            // to handle the case where the user grants the permission. See the documentation
+            // for ActivityCompat#requestPermissions for more details.
+            return;
+        }
         NotificationManagerCompat notificationManager = NotificationManagerCompat.from(this);
         notificationManager.notify(NOTIFICATION_ID, notification);
     }
@@ -470,7 +478,7 @@ public class MainActivity extends AppCompatActivity implements Callback.Volume, 
     private static class ConnectToApiTask extends AsyncTask<String, Void, Void> {
         @Override
         protected Void doInBackground(String... urls) {
-            if (urls[0] != null && !urls[0].equals("")) {
+            if (urls[0] != null && !urls[0].isEmpty()) {
                 if (api == null || api.getVolume() == -1) {
                     api = new WebApi("http://" + urls[0] + ":8000");
                 }
